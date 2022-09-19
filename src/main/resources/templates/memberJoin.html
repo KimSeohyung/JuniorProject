@@ -15,15 +15,67 @@
         <div id="validation-success"></div>
 
         <form id="joinform" action="/joinAdd" method="post">
-            <input type = "text" class="input" name = "user_name" placeholder="ID" required> <br>
-            <input type = "password" class="input" name = "user_pw" placeholder="PW" required> <br>
-            <input type = "text" class="input" name = "user_email" placeholder="email" required> <br>
-            <input type = "text" class="input" name = "user_phone" placeholder="phone_number" required> <br>
-            <button class="btn" type="submit"> 로그인 </button>
+
+
         </form>
     </div>
 
     <script>
+
+        $(document).ready(function () {
+            var validationSuccess = $("#validation-success");
+
+            $("#joinform").kendoForm({
+                orientation: "vertical",
+                formData: {
+                    user_name: "",
+                    user_email: "",
+                    user_pw: "pass123",
+                    user_phone: "",
+
+                },
+
+
+                items: [{
+                    type: "group",
+                    label: "회원가입",
+                    items: [
+                        { field: "user_name", label: "user_name", validation: { required: true  } },
+                        { field: "user_email", label: "user_email", name:"user_email", validation: { required: true, email: true } },
+                        {
+                            field: "user_pw",
+                            label: "user_pw",
+                            validation: { required: true },
+                            hint: "힌트: enter alphanumeric characters only.",
+                            editor: function (container, options) {
+                                $('<input type="password" id="Password" name="' + options.field + '" title="Password" required="required" autocomplete="off" aria-labelledby="Password-form-label" data-bind="value: Password" aria-describedby="Password-form-hint"/>')
+                                    .appendTo(container)
+                                    .kendoTextBox();
+                            }
+                        },
+
+                        { field: "user_phone", label: { text: "user_phone"} }
+
+                    ]
+
+                }],
+                validateField: function(e) {
+                    validationSuccess.html("");
+                },
+                submit: function(e) {
+                    e.preventDefault();
+                    validationSuccess.html("<div class='k-messagebox k-messagebox-success'>가입되셨습니다!</div>");
+                    $("#joinform").submit();
+                },
+                clear: function(ev) {
+                    validationSuccess.html("");
+                }
+            });
+
+
+
+        });
+
 
     </script>
 </div>

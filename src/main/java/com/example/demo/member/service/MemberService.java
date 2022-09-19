@@ -6,6 +6,7 @@ import com.example.demo.member.entity.MemberRepository;
 import com.example.demo.member.service.request.UserInsertCommand;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -2,9 +2,12 @@ package com.example.demo.member.service.request;
 
 
 
+import com.example.demo.member.entity.ColumnEncryptor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
@@ -14,6 +17,7 @@ import javax.persistence.*;
 @ToString
 @Entity
 @Table(name = "tb_user")
+@DynamicInsert
 public class UserInsertCommand {
 
 
@@ -23,7 +27,12 @@ public class UserInsertCommand {
 
     private String user_email;
     private String user_name;
+
+    @Convert(converter = ColumnEncryptor.class)
     private String user_pw;
-    private int user_phone;
+
+    private String user_phone;
+
+    @ColumnDefault("0")
     private String user_admin;
 }
