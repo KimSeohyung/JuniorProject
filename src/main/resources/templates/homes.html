@@ -1,11 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>home</title>
+    <title>homes</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/css/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="/css/styles/kendo.default.min.css" />
+    <link rel="stylesheet" href="/css/styles/kendo.default.mobile.min.css" />
+    <link rel="stylesheet" href="/css/styles/kendo.rtl.min.css" />
+    <link rel="stylesheet" href="/css/styles/examples-offline.css" />
+
+    <script src="/js/ui/jquery.min.js"></script>
+    <script src="/js/ui/kendo.all.min.js"></script>
+    <script src="/js/ui/jszip.min.js"></script>
+    <script src="/js/ui/console.js"></script>
+
+
+
 </head>
 <body>
-HelloWolrd!
-<p style="font-size: 20px;">!!!! 센터링크 데모 !!!!</p>
+<header style="width: 100%">
+    <div id="appbar" style="height: 15%; margin-bottom: 15px"></div>
+</header>
+<section>
+    <div class="free-board-layout" style="height: 100%; width: 100%;">
+        <div id="free-board-body" style="height: 88%;">
+            <div id="tilelayout"></div>
+            <script id="free-board-rec-grid-template" type="text/x-kendo-template">
+                <div id="free-board-rec-grid" style="margin: 5px; width: 100%";></div>
+            </script>
+            <script id="free-board-grid-template" type="text/x-kendo-template">
+                <div>
+                    <select id="free-board-search-drop-down-list" style="width: 10%; margin-left: 65%; ">
+                        <option>제  목</option>
+                        <option>내  용</option>
+                        <option>등 록 자</option>
+                    </select>
+                    <input id="free-board-search-text-box" style="width: 18%; margin-left: 2px;"/>
+                    <button id="free-board-search-btn" style="width: 5%">검색</button>
+                </div>
+                <div id="free-board-grid" style="margin: 5px; width: 100%; height: 84%";></div>
+                <button id="free-board-editor-btn" style="width: 5%; margin: 10px;">글쓰기</button>
+                <div id="pager"></div>
+            </script>
+        </div>
+    </div>
+    <script>
+        $("#tilelayout").kendoTileLayout({
+            containers: [{
+                colSpan: 1,
+                rowSpan: 3,
+                header: {
+                    text: "추천 게시글"
+                },
+                bodyTemplate: kendo.template($("#free-board-rec-grid-template").html())
+            },{
+                colSpan: 4,
+                rowSpan: 3,
+                header: {
+                    text: "게시판"
+                },
+                bodyTemplate: kendo.template($("#free-board-grid-template").html())
+            }],
+            columns: 5,
+            columnsWidth: 360,
+            rowsHeight: 275
+        });
+        var appbar = $("#appbar").kendoAppBar({
+            themeColor: "inherit",
+            items: [
+                { template: '<span id="logo"> <img src="/images/centerlink.png" alt="logo" style="width: 100%"> </span>', type: "contentItem" },
+
+                { width: 1, type: "spacer"},
+                {
+                    template: '<button id="home-top-btn"></button>', type: "contentItem"
+                },
+                {width: 16, type: "spacer"}
+            ]
+        });
+        const message = {
+            callBackConfirm: function(obj){
+                let opt = $.extend({title: document.title, msg: '처리하겠습니까?', callback: ''}, obj);
+                let $div = $('<div id="callBackConfirm"></div>');
+                $('body').append($div);
+                $($div).kendoDialog({
+                    title: opt.title,
+                    content: opt.msg,
+                    minWidth: 300,
+                    minHeight: 150,
+                    closable: false,
+                    actions: [
+                        {text: '취소'},
+                        {
+                            text: '확인',
+                            action: function () {
+                                if (typeof opt.callback === 'function') {
+                                    opt.callback.call();
+                                }
+                                return true;
+                            },
+                            primary: true
+                        }
+                    ],
+                    close: function () {
+                        $($div).data('kendoDialog').destroy();
+                    }
+
+                });
+            }
+        }
+        $("#home-top-btn").kendoFloatingActionButton({
+            icon: "plus",
+            align: 'top end',
+            positionMode: "absolute",
+            themeColor: "info",
+            size: "medium",
+            alignOffset: {
+                x: 10,
+                y: 10
+            },
+            items: [
+                {
+                    label: '로그아웃',
+                    icon: "logout",
+                    click: function () {
+                        message.callBackConfirm({msg: '로그아웃 하시겠습니까?', callback: ''})
+                    }
+                },
+                {
+                    label: '마이페이지',
+                    icon: 'user'
+                }]
+        });
+        $("#free-board-range-drop-down-list").kendoDropDownList({
+            fillMode: "flat",
+        });
+        $("#free-board-search-drop-down-list").kendoDropDownList();
+        $("#free-board-search-text-box").kendoTextBox();
+        $("#free-board-grid").kendoGrid({
+            columns: [
+                {
+                    field: "docNm",
+                    title: "제목",
+                    attributes: {style:'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'},
+                },
+                {
+                    field: "docTime",
+                    title: "등록시간",
+                    width: 100,
+                    attributes: {style: 'text-align:center'},
+                },
+                {
+                    field: "confirmPreCnt",
+                    title: "조회수",
+                    width: 60,
+                    attributes: {style: 'text-align:center'},
+                },
+                {
+                    field: "recommandCnt",
+                    title: "추천수",
+                    width: 60,
+                    attributes: {style: 'text-align:center'},
+                },
+                {
+                    field: "rgtrNm",
+                    title: "등록자",
+                    width: 110,
+                    attributes: {style: 'text-align:center'},
+                }
+            ]
+        });
+        $("#free-board-rec-grid").kendoGrid({
+            columns: [
+                {
+                    field: "docNm",
+                    title: "제목",
+                    attributes: {style:'text-overflow: ellipsis; overflow: hidden;'},
+                }
+            ]
+        });
+        $('#free-board-search-btn').kendoButton({
+            themeColor: 'base'
+        });
+        $('#free-board-editor-btn').kendoButton({
+            themeColor: 'info'
+        });
+        $("#pager").kendoPager({
+        });
+    </script>
+</section>
+
 </body>
 </html>
