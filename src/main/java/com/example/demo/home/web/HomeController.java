@@ -11,5 +11,10 @@ public class HomeController {
         return "homes";
     }
 
+    @RequestMapping("/editor")
+    public String editor(){
+        return "editor";
+    }
+
 
 }
