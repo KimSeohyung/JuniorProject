@@ -139,40 +139,80 @@
         $("#free-board-grid").kendoGrid({
             columns: [
                 {
-                    field: "docNm",
+                    field: "board_num",
+                    title: "글번호",
+                    width: 60,
+                    attributes: {style: 'text-align:center'}
+                },
+                {
+                    field: "board_title",
                     title: "제목",
                     attributes: {style:'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'},
                 },
                 {
-                    field: "docTime",
+                    field: "board_regidate",
                     title: "등록시간",
                     width: 100,
                     attributes: {style: 'text-align:center'},
                 },
                 {
-                    field: "confirmPreCnt",
+                    field: "board_viewcounts",
                     title: "조회수",
                     width: 60,
                     attributes: {style: 'text-align:center'},
                 },
                 {
-                    field: "recommandCnt",
+                    field: "like_num",
                     title: "추천수",
                     width: 60,
                     attributes: {style: 'text-align:center'},
                 },
                 {
-                    field: "rgtrNm",
+                    field: "user_num",
                     title: "등록자",
                     width: 110,
                     attributes: {style: 'text-align:center'},
                 }
             ]
         });
+        const boardDataSource ={
+            boardSelectPageDataSource : () => {
+                return new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url : "/v1/boardlist",
+                            type : "GET",
+                            dataType : "json",
+                            contentType : 'application/json; charset=utf-8'
+                        }
+                    },
+                    schema: {
+                        data: 'data.rows',
+                        total: 'data.totalCount',
+                        model: {
+                            board_num : {type: "number"},
+                            board_title : {type: "string"},
+                            board_regidate : {type: "string"},
+                            board_viewcounts : {type: "number"},
+                            like_num : {type: "number"},
+                            user_num : {type: "number"}
+                        },
+                        parse : (res) => {
+                            res.data.rows.forEach((row)=>{
+                                row.board_regidate = kendo.toString(new Date(row.board_regidate), "yyyy-MM-dd HH:mm");
+                            })
+                            return res;
+                        }
+                    },
+                    serverPaging : true,
+                    pageSize : 30
+                })
+            }
+        }
         $("#free-board-rec-grid").kendoGrid({
             columns: [
                 {
-                    field: "docNm",
+                    field: "board_title",
                     title: "제목",
                     attributes: {style:'text-overflow: ellipsis; overflow: hidden;'},
                 }
@@ -182,7 +222,10 @@
             themeColor: 'base'
         });
         $('#free-board-editor-btn').kendoButton({
-            themeColor: 'info'
+            themeColor: 'info',
+            click : () => {
+                window.location="/editor"
+            }
         });
         $("#pager").kendoPager({
         });
