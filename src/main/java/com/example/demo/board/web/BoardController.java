@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class BoardController {
 
-    @Autowired
-    BoardService boardService;
 
     @RequestMapping("/board")
     public String board() {
@@ -28,3 +26,4 @@ public class BoardController {
         return "boardDetail";
     }
 }
+
