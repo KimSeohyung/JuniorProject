@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BoardService {
@@ -22,9 +23,18 @@ public class BoardService {
         boardinsertRepository.save(command);
     }
 
-    public List<BoardEntity> boardList(){
-        return boardRepository.findAll();
+    public List<BoardEntity> findAll(){
+        List<BoardEntity> boardList = boardRepository.findAll();
+        return boardList;
     }
+
+    public Optional<BoardEntity> findOne(int boardNum){
+        Optional<BoardEntity> boardOne = boardRepository.findById(boardNum);
+        return boardOne;
+    }
+
+
+
 
 
 }

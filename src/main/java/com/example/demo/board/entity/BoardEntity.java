@@ -1,9 +1,13 @@
 package com.example.demo.board.entity;
 
+import com.example.demo.member.entity.MemberEntity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.beans.ConstructorProperties;
+import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,23 +18,42 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_board")
 public class BoardEntity {
-
+    // 기본키 매핑//
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer board_num;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "board_num", nullable = false, length = 11)
+    private Integer boardNum;
 
-    private String board_title;
-    private String board_contents;
+    // not null, varchar(10)
+    @Column(name = "board_title", nullable = false, length = 300)
+    private String boardTitle;
+
+    @Column(name = "board_contents", nullable = false, length = 4000)
+    private String boardContents;
 
     @ColumnDefault("0")
-    private Integer board_viewcounts;
+    @Column(name = "board_viewcounts", length = 11)
+    private Integer boardViewcounts;
 
-    private String board_type;
+    @Column(name = "board_type", nullable = false, length = 20)
+    private String boardType;
 
-    private LocalDateTime board_regidate = LocalDateTime.now();
-    private LocalDateTime board_modidate = LocalDateTime.now();
+    @Column(name = "board_regidate", length = 6)
+    private LocalDateTime boardRegidate = LocalDateTime.now();
 
-    private Integer user_num;
+    @Column(name = "board_modidate", length = 6)
+    private LocalDateTime boardModidate = LocalDateTime.now();
+
+    @ColumnDefault("0")
+    @Column(name = "board_isdel", length = 1)
+    private Integer boardIsdel;
+
+    @OneToOne(targetEntity = MemberEntity.class)
+    @JoinColumn(name = "user_num")
+    private MemberEntity member;
+
+
+
 
 
 

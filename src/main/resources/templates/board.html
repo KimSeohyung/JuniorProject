@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>homes</title>
     <meta charset="UTF-8" />
@@ -136,71 +136,31 @@
         });
         $("#free-board-search-drop-down-list").kendoDropDownList();
         $("#free-board-search-text-box").kendoTextBox();
-        $("#free-board-grid").kendoGrid({
-            columns: [
-                {
-                    field: "board_num",
-                    title: "글번호",
-                    width: 60,
-                    attributes: {style: 'text-align:center'}
-                },
-                {
-                    field: "board_title",
-                    title: "제목",
-                    attributes: {style:'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'},
-                },
-                {
-                    field: "board_regidate",
-                    title: "등록시간",
-                    width: 100,
-                    attributes: {style: 'text-align:center'},
-                },
-                {
-                    field: "board_viewcounts",
-                    title: "조회수",
-                    width: 60,
-                    attributes: {style: 'text-align:center'},
-                },
-                {
-                    field: "like_num",
-                    title: "추천수",
-                    width: 60,
-                    attributes: {style: 'text-align:center'},
-                },
-                {
-                    field: "user_num",
-                    title: "등록자",
-                    width: 110,
-                    attributes: {style: 'text-align:center'},
-                }
-            ]
-        });
         const boardDataSource ={
             boardSelectPageDataSource : () => {
                 return new kendo.data.DataSource({
                     transport: {
                         read: {
-                            url : "/v1/boardlist",
+                            url : "/v1/boardList",
                             type : "GET",
                             dataType : "json",
                             contentType : 'application/json; charset=utf-8'
                         }
                     },
                     schema: {
-                        data: 'data.rows',
-                        total: 'data.totalCount',
                         model: {
-                            board_num : {type: "number"},
-                            board_title : {type: "string"},
-                            board_regidate : {type: "string"},
-                            board_viewcounts : {type: "number"},
-                            like_num : {type: "number"},
-                            user_num : {type: "number"}
+                            boardNum : {type: "number"},
+                            boardTitle : {type: "string"},
+                            boardRegidate : {type: "string"},
+                            boardViewcounts : {type: "number"},
+                            likeNum : {type: "number"},
+                            userName : {type: "string"}
                         },
                         parse : (res) => {
-                            res.data.rows.forEach((row)=>{
-                                row.board_regidate = kendo.toString(new Date(row.board_regidate), "yyyy-MM-dd HH:mm");
+                            res.forEach((row)=>{
+                                row.userName = row.member.userName;
                             })
+                            console.log(res);
                             return res;
                         }
                     },
@@ -209,6 +169,54 @@
                 })
             }
         }
+        $("#free-board-grid").kendoGrid({
+            columns: [
+                {
+                    field: "boardNum",
+                    title: "글번호",
+                    width: 60,
+                    attributes: {style: 'text-align:center'}
+                },
+                {
+                    field: "boardTitle",
+                    title: "제목",
+                    attributes: {style:'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'},
+                },
+                {
+                    field: "boardRegidate",
+                    title: "등록시간",
+                    width: 100,
+                    attributes: {style: 'text-align:center'},
+                },
+                {
+                    field: "boardViewcounts",
+                    title: "조회수",
+                    width: 60,
+                    attributes: {style: 'text-align:center'},
+                },
+                {
+                    field: "likeNum",
+                    title: "추천수",
+                    width: 60,
+                    attributes: {style: 'text-align:center'},
+                },
+                {
+                    field: "userName",
+                    title: "등록자",
+                    width: 110,
+                    attributes: {style: 'text-align:center'},
+                }
+            ],
+            dataSource: boardDataSource.boardSelectPageDataSource(),
+            change: (e) => {
+                const cell = e.sender.select();
+                const selected = e.sender.dataSource.view()[cell.closest("tr").index()];
+                window.location.href = '/detailOne/'${}
+            },
+            resizable: false,
+            selectable: true
+        });
+
         $("#free-board-rec-grid").kendoGrid({
             columns: [
                 {
