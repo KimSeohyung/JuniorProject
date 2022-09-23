@@ -1,13 +1,12 @@
 package com.example.demo.board.entity;
 
-import com.example.demo.member.entity.MemberEntity;
+import com.example.demo.member.entity.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import java.beans.ConstructorProperties;
-import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 
 @Getter
@@ -48,9 +47,9 @@ public class BoardEntity {
     @Column(name = "board_isdel", length = 1)
     private Integer boardIsdel;
 
-    @OneToOne(targetEntity = MemberEntity.class)
+    @OneToOne(targetEntity = Member.class)
     @JoinColumn(name = "user_num")
-    private MemberEntity member;
+    private Member member;
 
 
 
