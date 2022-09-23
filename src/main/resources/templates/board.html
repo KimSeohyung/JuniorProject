@@ -123,7 +123,7 @@
                     label: '로그아웃',
                     icon: "logout",
                     click: function () {
-                        message.callBackConfirm({msg: '로그아웃 하시겠습니까?', callback: ''})
+                        message.callBackConfirm({msg: '로그아웃 하시겠습니까?', callback: callback: new user().logout})
                     }
                 },
                 {
@@ -237,6 +237,14 @@
         });
         $("#pager").kendoPager({
         });
+        class user{
+            logout() {
+
+                window.location.href = '/logout';
+            }
+        }
+
+
     </script>
 </section>
 
