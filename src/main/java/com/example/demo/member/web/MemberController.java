@@ -14,8 +14,13 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
-    @GetMapping("/join")
-    public String join() { return "memberJoin";}
+    @GetMapping("join")
+    public String join() { return "member/memberJoin";}
+
+    @GetMapping("login")
+    public String login() { return "member/login";}
 
 
+    @GetMapping("/user/login")
+    public String loginResult() {return "board";}
 }

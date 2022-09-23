@@ -1,11 +1,15 @@
 package com.example.demo.member.entity;
 
-import com.example.demo.member.service.request.UserInsertCommand;
+
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 
-@Repository
-public interface MemberRepository extends JpaRepository<UserInsertCommand,String> {
+
+
+public interface MemberRepository extends JpaRepository<Member,Integer> {
+   Member findByEmail(String email);
 
 }
