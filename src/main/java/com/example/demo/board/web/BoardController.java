@@ -24,6 +24,7 @@ public class BoardController {
     }
 
     @RequestMapping("/detail")
-    public String detail() {return "boardDetail";
+    public String detail(Model model) {
+        return "boardDetail";
     }
 }

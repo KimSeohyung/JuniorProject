@@ -211,7 +211,7 @@
             change: (e) => {
                 const cell = e.sender.select();
                 const selected = e.sender.dataSource.view()[cell.closest("tr").index()];
-                window.location.href = '/detailOne/'${}
+                window.location.href = '/detailOne?boardNum='+selected.boardNum
             },
             resizable: false,
             selectable: true
