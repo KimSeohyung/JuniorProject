@@ -6,6 +6,7 @@ import com.example.demo.board.service.request.BoardInsertCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +30,11 @@ public class BoardRestController {
     }
 
     @GetMapping("/detailOne/{boardNum}")
-    public Optional<BoardEntity> detailOne(Model model, @PathVariable Integer boardNum){
-        model.addAttribute("boardNum", boardNum);
-        return boardService.findOne(boardNum);
+    public ModelAndView detailOne(@PathVariable int boardNum){
+        Optional<BoardEntity> boardOne = boardService.findOne(boardNum);
+        ModelAndView mav = new ModelAndView("boardDetail");
+        mav.addObject("boardOne", boardOne.get());
+        return mav;
     }
 
 }

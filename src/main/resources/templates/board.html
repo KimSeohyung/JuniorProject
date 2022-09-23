@@ -123,8 +123,7 @@
                     label: '로그아웃',
                     icon: "logout",
                     click: function () {
-                        message.callBackConfirm({msg: '로그아웃 하시겠습니까?', callback: new user().logout})
-
+                        message.callBackConfirm({msg: '로그아웃 하시겠습니까?', callback: ''})
                     }
                 },
                 {
@@ -212,7 +211,7 @@
             change: (e) => {
                 const cell = e.sender.select();
                 const selected = e.sender.dataSource.view()[cell.closest("tr").index()];
-                window.location.href = 'v1/detailOne/'+selected.boardNum
+                window.location.href = '/detailOne?boardNum='+selected.boardNum
             },
             resizable: false,
             selectable: true
@@ -238,13 +237,6 @@
         });
         $("#pager").kendoPager({
         });
-class user{
-    logout() {
-
-        window.location.href = '/logout';
-    }
-}
-
     </script>
 </section>
 

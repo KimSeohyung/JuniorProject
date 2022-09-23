@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>detail</title>
@@ -21,7 +21,7 @@
 </header>
 <section>
     <div class="demo-section wide" style="width: 80%; height: 800px;">
-        <input type="hidden" id="free-board-detail-user-name" name="userName">
+        <input type="hidden" id="free-board-detail-board-num" name="boardNum">
         <div style="flex-flow: column; width: 100%">
             <div class="pop-k-header k-card-header">
                 <div>
@@ -63,9 +63,9 @@
             </div>
         </div>
     </div>
-    <script>
+    <script th:inline="javascript">
 
-        const BoardDetailUrl = "/v1/deltailOne"
+
         $("#free-board-detail-popup-title").text('게시글 상세보기');
         var appbar = $("#appbar").kendoAppBar({
             themeColor: "inherit",
@@ -103,22 +103,13 @@
         $("#free-board-detail-update-btn").kendoButton({
             themeColor: 'info'
         });
-        const param = {
-            userName : BoardDetailUrl.get("userName")
-        };
-        const boardSelectItem = new cpDataSource(METHOD.GET, '/v1/detailOne',param).getDataSource();
-        boardSelectItem.read().then((()=>{
-            const item = boardSelectItem.data()[0];
 
-            $("#free-board-detail-user-name").val(item.userName);
-            item.boardRegidate = kendo.toString(new Date(item.boardRegidate), "yyyy-MM-dd H:mm");
-            item.boardModidate = kendo.toString(new Date(item.boardModidate), "yyyy-MM-dd H:mm");
-
-            $("#free-board-detail-title").text(item.boardTitle);
-            $("#free-board-detail-contents").data("kendoEditor").value(item.html);
-            $("#free-board-detail-reg-date").data("kendoTextBox").value(item.boardRegidate);
-            $("#free-board-detail-modi-date").data("kendoTextBox").value(item.boardModidate);
-        }));
+        boardRegidate = kendo.toString(new Date([[${boardOne.boardRegidate}]]), "yyyy-MM-dd H:mm");
+        boardModidate = kendo.toString(new Date([[${boardOne.boardModidate}]]), "yyyy-MM-dd H:mm");
+            $("#free-board-detail-title").text([[${boardOne.boardTitle}]]);
+            $("#free-board-detail-contents").text([[${boardOne.boardContents}]]);
+            $("#free-board-detail-reg-date").data("kendoTextBox").value(boardRegidate);
+            $("#free-board-detail-modi-date").data("kendoTextBox").value(boardModidate);
     </script>
 </section>
 </body>
