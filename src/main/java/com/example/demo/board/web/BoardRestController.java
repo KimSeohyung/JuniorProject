@@ -29,7 +29,7 @@ public class BoardRestController {
         return boardService.findAll();
     }
 
-    @GetMapping("/detailOne/{boardNum}")
+    @GetMapping("/detailOne{boardNum}")
     public ModelAndView detailOne(@PathVariable int boardNum){
         Optional<BoardEntity> boardOne = boardService.findOne(boardNum);
         ModelAndView mav = new ModelAndView("boardDetail");
