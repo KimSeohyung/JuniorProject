@@ -22,6 +22,7 @@
 <section>
     <div class="demo-section wide" style="width: 80%; height: 800px;">
         <input type="hidden" id="free-board-detail-board-num" name="boardNum">
+        <input type="hidden" id="free-board-detail-user-num" name="userIdx">
         <div style="flex-flow: column; width: 100%">
             <div class="pop-k-header k-card-header">
                 <div>
@@ -99,7 +100,10 @@
         var appbar = $("#appbar").kendoAppBar({
             themeColor: "inherit",
             items: [
-                { template: '<span id="logo" style="font-size: 24px; font-weight: bold;"> <img src="/images/centerlink.png" alt="logo" style="width: 100%"> </span>', type: "contentItem" },
+                {
+                    template: '<a id="logo" href="/board"> <img src="/images/centerlink.png" alt="logo" style="width: 100%"> </a>',
+                    type: "contentItem"
+                },
 
                 { width: 1, type: "spacer"},
                 {
@@ -126,10 +130,11 @@
         $("#free-board-detail-like").kendoButton({
             themeColor: 'base'
         })
+
         $("#free-board-detail-delete-btn").kendoButton({
             themeColor: 'base',
             click: () => {
-                message.callBackConfirm({msg: '삭제 하시겠습니까?', callback: new boardDel().deleteOne});
+                    message.callBackConfirm({msg: '삭제 하시겠습니까?', callback: new boardDel().deleteOne});
             }
         });
         $("#free-board-detail-update-btn").kendoButton({
@@ -138,6 +143,7 @@
 
         boardRegidate = kendo.toString(new Date([[${boardOne.boardRegidate}]]), "yyyy-MM-dd H:mm");
         boardModidate = kendo.toString(new Date([[${boardOne.boardModidate}]]), "yyyy-MM-dd H:mm");
+        $("#free-board-detail-user-num").val([[${boardOne.member.userIdx}]])
         $("#free-board-detail-board-num").val([[${boardOne.boardNum}]]);
         $("#free-board-detail-title").text([[${boardOne.boardTitle}]]);
         $("#free-board-detail-contents").text([[${boardOne.boardContents}]]);
@@ -147,12 +153,19 @@
         class boardDel{
             deleteOne() {
                 const boardNum = Number($("#free-board-detail-board-num").val());
-                $.ajax({
-                    url: '/v1/delete/'+boardNum,
-                    contentType: "application/json; charset=utf-8",
-                    success : window.location.href= '/board'
-                });
-            }
+                const userIdx = [[${userIdx}]];
+                const dbuserIdx = [[${boardOne.member.userIdx}]];
+                if (userIdx!==dbuserIdx){
+                    alert("삭제실패");
+                }else {
+                    $.ajax({
+                        url: '/v1/delete/' + boardNum,
+                        contentType: "application/json; charset=utf-8",
+                        success: window.location.href = '/board'
+                    });
+                };
+            };
+
         }
     </script>
 </section>

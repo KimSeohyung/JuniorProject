@@ -41,10 +41,10 @@
                 </div>
             </form>
           <script>
-              // function submit(e){
-              //     e.preventDefault();
-              //     $("#saveboardform").submit();
-              // }
+              function submit(e){
+                  e.preventDefault();
+                  $("#saveboardform").submit();
+              }
               const message = {
                   callBackConfirm: function(obj){
                       let opt = $.extend({title: document.title, msg: '처리하겠습니까?', callback: ''}, obj);
@@ -78,22 +78,22 @@
               }
               $('#free-board-editor-popup-title').text('게시글 등록');
               $("#free-board-search-drop-down-list").kendoDropDownList();
-              $('#free-board-editor-tile').kendoTextBox();
+              $('#free-board-editor-title').kendoTextBox();
               $('#free-board-editor-btn-save').kendoButton({
-                  themeColor: 'info',
-                  click: ()=> {
-                      message.callBackConfirm({msg: '등록하시겠습니까?', callback: ''});
-                  }
+                  themeColor: 'info'
               });
 
               $('#free-board-editor-btn-cancle').kendoButton({
-                  themeColor: 'base'
+                  themeColor: 'base',
+                  click: function () {
+                      window.location.href = "/board";
+                  }
               });
 
             var appbar = $("#appbar").kendoAppBar({
               themeColor: "inherit",
               items: [
-                { template: '<span id="logo" style="font-size: 24px; font-weight: bold;"> <img src="/images/centerlink.png" alt="logo" style="width: 100%"> </span>', type: "contentItem" },
+                { template: '<a id="logo" href="/board"> <img src="/images/centerlink.png" alt="logo" style="width: 100%"> </a>', type: "contentItem" },
 
                 { width: 1, type: "spacer"},
                 {
@@ -126,12 +126,6 @@
                         icon: 'user'
                     }]
             });
-
-            // class boardAdd{
-            //     insertFreeBoard : () {
-            //
-            //     }
-            // }
 
           </script>
         </div>
