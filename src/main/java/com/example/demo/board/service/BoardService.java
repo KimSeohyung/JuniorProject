@@ -28,8 +28,8 @@ public class BoardService {
         return boardList;
     }
 
-    public Optional<BoardEntity> findOne(int boardNum){
-        Optional<BoardEntity> boardOne = boardRepository.findById(boardNum);
+    public BoardEntity findOne(int boardNum){
+        BoardEntity boardOne = boardRepository.findByBoardNum(boardNum);
         return boardOne;
     }
 
