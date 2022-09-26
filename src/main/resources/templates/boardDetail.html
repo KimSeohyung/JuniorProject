@@ -64,8 +64,37 @@
         </div>
     </div>
     <script th:inline="javascript">
+        const message = {
+            callBackConfirm: function(obj){
+                let opt = $.extend({title: document.title, msg: '처리하겠습니까?', callback: ''}, obj);
+                let $div = $('<div id="callBackConfirm"></div>');
+                $('body').append($div);
+                $($div).kendoDialog({
+                    title: opt.title,
+                    content: opt.msg,
+                    minWidth: 300,
+                    minHeight: 150,
+                    closable: false,
+                    actions: [
+                        {text: '취소'},
+                        {
+                            text: '확인',
+                            action: function () {
+                                if (typeof opt.callback === 'function') {
+                                    opt.callback.call();
+                                }
+                                return true;
+                            },
+                            primary: true
+                        }
+                    ],
+                    close: function () {
+                        $($div).data('kendoDialog').destroy();
+                    }
 
-
+                });
+            }
+        }
         $("#free-board-detail-popup-title").text('게시글 상세보기');
         var appbar = $("#appbar").kendoAppBar({
             themeColor: "inherit",
@@ -98,7 +127,10 @@
             themeColor: 'base'
         })
         $("#free-board-detail-delete-btn").kendoButton({
-            themeColor: 'base'
+            themeColor: 'base',
+            click: () => {
+                message.callBackConfirm({msg: '삭제 하시겠습니까?', callback: new boardDel().deleteOne});
+            }
         });
         $("#free-board-detail-update-btn").kendoButton({
             themeColor: 'info'
@@ -106,10 +138,22 @@
 
         boardRegidate = kendo.toString(new Date([[${boardOne.boardRegidate}]]), "yyyy-MM-dd H:mm");
         boardModidate = kendo.toString(new Date([[${boardOne.boardModidate}]]), "yyyy-MM-dd H:mm");
-            $("#free-board-detail-title").text([[${boardOne.boardTitle}]]);
-            $("#free-board-detail-contents").text([[${boardOne.boardContents}]]);
-            $("#free-board-detail-reg-date").data("kendoTextBox").value(boardRegidate);
-            $("#free-board-detail-modi-date").data("kendoTextBox").value(boardModidate);
+        $("#free-board-detail-board-num").val([[${boardOne.boardNum}]]);
+        $("#free-board-detail-title").text([[${boardOne.boardTitle}]]);
+        $("#free-board-detail-contents").text([[${boardOne.boardContents}]]);
+        $("#free-board-detail-reg-date").data("kendoTextBox").value(boardRegidate);
+        $("#free-board-detail-modi-date").data("kendoTextBox").value(boardModidate);
+
+        class boardDel{
+            deleteOne() {
+                const boardNum = Number($("#free-board-detail-board-num").val());
+                $.ajax({
+                    url: '/v1/delete/'+boardNum,
+                    contentType: "application/json; charset=utf-8",
+                    success : window.location.href= '/board'
+                });
+            }
+        }
     </script>
 </section>
 </body>

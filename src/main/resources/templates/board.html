@@ -158,6 +158,7 @@
                         },
                         parse : (res) => {
                             res.forEach((row)=>{
+                                row.boardRegidate = kendo.toString(new Date(row.boardRegidate), "yyyy-MM-dd HH:mm");
                                 row.userName = row.member.userName;
                             })
                             console.log(res);
@@ -211,7 +212,7 @@
             change: (e) => {
                 const cell = e.sender.select();
                 const selected = e.sender.dataSource.view()[cell.closest("tr").index()];
-                window.location.href = '/v1/detailOne'+selected.boardNum
+                window.location.href = '/v1/detailOne/'+selected.boardNum
             },
             resizable: false,
             selectable: true

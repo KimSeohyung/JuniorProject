@@ -33,6 +33,10 @@ public class BoardService {
         return boardOne;
     }
 
+    public void deleteOne(int boardNum){
+        boardRepository.deleteById(boardNum);
+    }
+
 
 
 
