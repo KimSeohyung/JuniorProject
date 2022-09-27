@@ -14,6 +14,17 @@
     <script src="/js/ui/kendo.all.min.js"></script>
     <script src="/js/ui/jszip.min.js"></script>
     <script src="/js/ui/console.js"></script>
+
+    <script th:inline="javascript">
+        var userIdx = [[${userIdx}]];
+        var boardNum = [[${boardOne.boardNum}]];
+        var boardTitle = [[${boardOne.boardTitle}]];
+        var boardContets = [[${boardOne.boardContents}]];
+        var boardRegidate = [[${boardOne.boardRegidate}]];
+        var boardModidate = [[${boardOne.boardModidate}]];
+        var dbUserIdx = [[${boardOne.member.userIdx}]];
+        var likeCnt = [[${likeCnt}]];
+    </script>
 </head>
 <body>
 <header style="width: 100%">
@@ -59,115 +70,14 @@
                     <button id="free-board-detail-delete-btn">삭제</button>
                 </div>
                 <div style="padding: 5px;">
+                    <h3 id="likeCnt"  th:text="${likeCnt}"></h3>
                     <button id="free-board-detail-like">추천</button>
                 </div>
             </div>
         </div>
     </div>
-    <script th:inline="javascript">
-        const message = {
-            callBackConfirm: function(obj){
-                let opt = $.extend({title: document.title, msg: '처리하겠습니까?', callback: ''}, obj);
-                let $div = $('<div id="callBackConfirm"></div>');
-                $('body').append($div);
-                $($div).kendoDialog({
-                    title: opt.title,
-                    content: opt.msg,
-                    minWidth: 300,
-                    minHeight: 150,
-                    closable: false,
-                    actions: [
-                        {text: '취소'},
-                        {
-                            text: '확인',
-                            action: function () {
-                                if (typeof opt.callback === 'function') {
-                                    opt.callback.call();
-                                }
-                                return true;
-                            },
-                            primary: true
-                        }
-                    ],
-                    close: function () {
-                        $($div).data('kendoDialog').destroy();
-                    }
 
-                });
-            }
-        }
-        $("#free-board-detail-popup-title").text('게시글 상세보기');
-        var appbar = $("#appbar").kendoAppBar({
-            themeColor: "inherit",
-            items: [
-                {
-                    template: '<a id="logo" href="/board"> <img src="/images/centerlink.png" alt="logo" style="width: 100%"> </a>',
-                    type: "contentItem"
-                },
-
-                { width: 1, type: "spacer"},
-                {
-                    template: '<button id="home-top-btn"></button>', type: "contentItem"
-                },
-                {width: 16, type: "spacer"}
-            ]
-        });
-        $("#free-board-detail-body-splitter").kendoSplitter({
-            orientation: 'vertical',
-            panes: [
-                {collapsible: false, resizable: false},
-                {collapsible: false, size: '100px', resizable: false}
-            ]
-        });
-        $("#free-board-detail-reg-date").kendoTextBox({
-            fillMode: 'flat',
-            readonly: true
-        });
-        $("#free-board-detail-modi-date").kendoTextBox({
-            fillMode: 'flat',
-            readonly: true
-        });
-        $("#free-board-detail-like").kendoButton({
-            themeColor: 'base'
-        })
-
-        $("#free-board-detail-delete-btn").kendoButton({
-            themeColor: 'base',
-            click: () => {
-                    message.callBackConfirm({msg: '삭제 하시겠습니까?', callback: new boardDel().deleteOne});
-            }
-        });
-        $("#free-board-detail-update-btn").kendoButton({
-            themeColor: 'info'
-        });
-
-        boardRegidate = kendo.toString(new Date([[${boardOne.boardRegidate}]]), "yyyy-MM-dd H:mm");
-        boardModidate = kendo.toString(new Date([[${boardOne.boardModidate}]]), "yyyy-MM-dd H:mm");
-        $("#free-board-detail-user-num").val([[${boardOne.member.userIdx}]])
-        $("#free-board-detail-board-num").val([[${boardOne.boardNum}]]);
-        $("#free-board-detail-title").text([[${boardOne.boardTitle}]]);
-        $("#free-board-detail-contents").text([[${boardOne.boardContents}]]);
-        $("#free-board-detail-reg-date").data("kendoTextBox").value(boardRegidate);
-        $("#free-board-detail-modi-date").data("kendoTextBox").value(boardModidate);
-
-        class boardDel{
-            deleteOne() {
-                const boardNum = Number($("#free-board-detail-board-num").val());
-                const userIdx = [[${userIdx}]];
-                const dbuserIdx = [[${boardOne.member.userIdx}]];
-                if (userIdx!==dbuserIdx){
-                    alert("삭제실패");
-                }else {
-                    $.ajax({
-                        url: '/v1/delete/' + boardNum,
-                        contentType: "application/json; charset=utf-8",
-                        success: window.location.href = '/board'
-                    });
-                };
-            };
-
-        }
-    </script>
 </section>
 </body>
+<script th:src="@{/js/board/boardDetail.js}"></script>
 </html>

@@ -1,6 +1,7 @@
 package com.example.demo.board.web;
 
 import com.example.demo.board.entity.BoardEntity;
+import com.example.demo.board.entity.LikeEntity;
 import com.example.demo.board.service.BoardService;
 import com.example.demo.board.service.request.BoardInsertCommand;
 import com.example.demo.config.auth.PrincipalDetail;
@@ -24,6 +25,8 @@ public class BoardRestController {
     @Autowired
     BoardService boardService;
 
+
+
     @PostMapping("/boardAdd")
     public void boardAdd(BoardInsertCommand command , @AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletResponse response)throws IOException{
         command.setUser_num(principalDetail.getUserIdx());
@@ -39,10 +42,15 @@ public class BoardRestController {
     @GetMapping("/detailOne/{boardNum}")
     public ModelAndView detailOne(@PathVariable int boardNum, @AuthenticationPrincipal PrincipalDetail principalDetail){
        BoardEntity boardOne = boardService.findOne(boardNum);
+       int likeCnt = boardService.likeCnt(boardNum);
        int userIdx = principalDetail.getUserIdx();
+
+        System.out.println("좋아요:"+likeCnt);
+
         ModelAndView mav = new ModelAndView("boardDetail");
         mav.addObject("boardOne", boardOne);
         mav.addObject("userIdx", userIdx);
+        mav.addObject("likeCnt",likeCnt);
         return mav;
     }
 
@@ -66,6 +74,32 @@ public class BoardRestController {
         }
 
 
+
+
+
+    }
+
+    @PostMapping("/updateLike/{boardNum}")
+    public int updateLike( @PathVariable int boardNum , @AuthenticationPrincipal PrincipalDetail principalDetail){
+
+        LikeEntity likeEntity = new LikeEntity();
+
+        int userIdx = principalDetail.getUserIdx();
+        int likeCnt = boardService.likeCnt(boardNum);
+
+
+        likeEntity.setUserNum(userIdx);
+        likeEntity.setBoardIdx(boardNum);
+
+        int likeCheck = boardService.likeCheck(boardNum,userIdx);
+
+        if (likeCheck == 1 ) {
+            boardService.likeDelete(boardNum,userIdx);
+        }else {
+            boardService.likeInsert(likeEntity);
+        }
+
+        return likeCnt;
 
     }
 

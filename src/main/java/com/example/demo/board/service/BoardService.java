@@ -1,9 +1,9 @@
 package com.example.demo.board.service;
 
-import com.example.demo.board.entity.BoardEntity;
-import com.example.demo.board.entity.BoardInsertRepository;
-import com.example.demo.board.entity.BoardRepository;
+import com.example.demo.board.entity.*;
 import com.example.demo.board.service.request.BoardInsertCommand;
+import com.example.demo.member.entity.Member;
+import com.example.demo.member.entity.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,11 @@ public class BoardService {
     @Autowired
     BoardInsertRepository boardinsertRepository;
 
+    @Autowired
+    LikeRepository likeRepository;
+
+    @Autowired
+    MemberRepository memberRepository;
     @Autowired
     BoardRepository boardRepository;
 
@@ -37,7 +42,28 @@ public class BoardService {
         boardRepository.deleteById(boardNum);
     }
 
+    public void likeInsert(LikeEntity likeEntity){
 
+
+        likeRepository.save(likeEntity);
+    }
+
+    public int likeCheck(int boardNum,int userNum) {
+      LikeEntity find =  likeRepository.findByBoardIdxAndUserNum(boardNum,userNum);
+
+      if (find != null) {
+          return 1;
+      }else {
+          return 0;
+      }
+    }
+
+    public void likeDelete(int boardNum,int userNum) {
+        LikeEntity find =  likeRepository.findByBoardIdxAndUserNum(boardNum,userNum);
+        likeRepository.delete(find);
+    }
+
+    public int likeCnt(int boardNum) { return likeRepository.countByBoardIdx(boardNum); }
 
 
 
