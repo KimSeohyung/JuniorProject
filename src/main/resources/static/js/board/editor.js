@@ -36,6 +36,7 @@ const message = {
 $('#free-board-editor-popup-title').text('게시글 등록');
 $("#free-board-search-drop-down-list").kendoDropDownList();
 $('#free-board-editor-title').kendoTextBox();
+$('#editor').kendoTextBox();
 $('#free-board-editor-btn-save').kendoButton({
     themeColor: 'info'
 });

@@ -7,8 +7,6 @@ import com.example.demo.board.service.request.BoardInsertCommand;
 import com.example.demo.config.auth.PrincipalDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1")
@@ -24,8 +21,6 @@ public class BoardRestController {
 
     @Autowired
     BoardService boardService;
-
-
 
     @PostMapping("/boardAdd")
     public void boardAdd(BoardInsertCommand command , @AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletResponse response)throws IOException{
@@ -44,7 +39,6 @@ public class BoardRestController {
        BoardEntity boardOne = boardService.findOne(boardNum);
        int likeCnt = boardService.likeCnt(boardNum);
        int userIdx = principalDetail.getUserIdx();
-
         System.out.println("좋아요:"+likeCnt);
 
         ModelAndView mav = new ModelAndView("boardDetail");
@@ -55,7 +49,9 @@ public class BoardRestController {
     }
 
     @GetMapping("/delete/{boardNum}")
-    public void delete(@PathVariable int boardNum ,@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletResponse response) throws IOException {
+    public void delete(@PathVariable int boardNum,
+                       @AuthenticationPrincipal PrincipalDetail principalDetail,
+                       HttpServletResponse response) throws IOException {
         String email = principalDetail.getUsername();
         int userIdx = principalDetail.getUserIdx();
         System.out.println(userIdx);
@@ -73,10 +69,22 @@ public class BoardRestController {
             response.sendRedirect("/board");
         }
 
+    }
 
+    @PostMapping("/boardModi/{boardNum}")
+    public void boardModi(BoardInsertCommand command,
+                          @PathVariable int boardNum,
+                          @AuthenticationPrincipal PrincipalDetail principalDetail,
+                          HttpServletResponse response) throws IOException{
+        command.setUser_num(principalDetail.getUserIdx());
+        command.setBoard_num(boardNum);
+        boardService.boardModi(command);
+        response.sendRedirect("/v1/detailOne/"+boardNum);
+    }
 
-
-
+    @GetMapping("/boardRead/{boardNum}")
+    public void boardRead(@PathVariable int boardNum, Model model){
+        model.addAttribute("view", boardService.updateView(boardNum));
     }
 
     @PostMapping("/updateLike/{boardNum}")
@@ -95,6 +103,7 @@ public class BoardRestController {
 
         if (likeCheck == 1 ) {
             boardService.likeDelete(boardNum,userIdx);
+
         }else {
             boardService.likeInsert(likeEntity);
         }
@@ -102,6 +111,8 @@ public class BoardRestController {
         return likeCnt;
 
     }
+
+
 
 
 }

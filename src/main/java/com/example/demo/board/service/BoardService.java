@@ -2,15 +2,17 @@ package com.example.demo.board.service;
 
 import com.example.demo.board.entity.*;
 import com.example.demo.board.service.request.BoardInsertCommand;
-import com.example.demo.member.entity.Member;
 import com.example.demo.member.entity.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class BoardService {
 
     @Autowired
@@ -21,6 +23,7 @@ public class BoardService {
 
     @Autowired
     MemberRepository memberRepository;
+
     @Autowired
     BoardRepository boardRepository;
 
@@ -42,6 +45,13 @@ public class BoardService {
         boardRepository.deleteById(boardNum);
     }
 
+    public void boardModi(BoardInsertCommand command)  {boardinsertRepository.save(command);}
+
+    @Transactional
+    public int updateView(int boardNum) {
+        return boardRepository.updateView(boardNum);
+    }
+
     public void likeInsert(LikeEntity likeEntity){
 
 
@@ -49,13 +59,13 @@ public class BoardService {
     }
 
     public int likeCheck(int boardNum,int userNum) {
-      LikeEntity find =  likeRepository.findByBoardIdxAndUserNum(boardNum,userNum);
+        LikeEntity find =  likeRepository.findByBoardIdxAndUserNum(boardNum,userNum);
 
-      if (find != null) {
-          return 1;
-      }else {
-          return 0;
-      }
+        if (find != null) {
+            return 1;
+        }else {
+            return 0;
+        }
     }
 
     public void likeDelete(int boardNum,int userNum) {
@@ -64,7 +74,5 @@ public class BoardService {
     }
 
     public int likeCnt(int boardNum) { return likeRepository.countByBoardIdx(boardNum); }
-
-
 
 }

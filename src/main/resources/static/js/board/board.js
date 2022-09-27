@@ -121,8 +121,8 @@
     return res;
 }
 },
-    serverPaging : true,
-    pageSize : 30
+        pageSize : 5,
+        pageable: true
 })
 }
 }
@@ -164,14 +164,22 @@
     attributes: {style: 'text-align:center'},
 }
     ],
+    toolbar : ["search"],
+        search : {
+        field : ["boardTitle"],
+        field : ["userName"]
+        },
     dataSource: boardDataSource.boardSelectPageDataSource(),
     change: (e) => {
     const cell = e.sender.select();
     const selected = e.sender.dataSource.view()[cell.closest("tr").index()];
     window.location.href = '/v1/detailOne/'+selected.boardNum
 },
-    resizable: false,
-    selectable: true
+        resizable: false,
+        selectable: true,
+        pageable : {
+            refresh : true
+        }
 });
 
     $("#free-board-rec-grid").kendoGrid({
@@ -191,8 +199,6 @@
     click : () => {
     window.location="/editor"
 }
-});
-    $("#pager").kendoPager({
 });
     class user{
     logout() {

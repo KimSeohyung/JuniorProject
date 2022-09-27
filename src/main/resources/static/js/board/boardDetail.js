@@ -72,11 +72,24 @@ const message = {
     $("#free-board-detail-delete-btn").kendoButton({
     themeColor: 'base',
         click: () => {
-        message.callBackConfirm({msg: '삭제 하시겠습니까?', callback: new boardDel().deleteOne});
+            if (userIdx!==dbUserIdx){
+                alert("자신이 작성한 글만 삭제할 수 있습니다.");
+            }else {
+                message.callBackConfirm({msg: '삭제 하시겠습니까?', callback: new boardDel().deleteOne});
+            };
     }
+
 });
     $("#free-board-detail-update-btn").kendoButton({
-    themeColor: 'info'
+    themeColor: 'info',
+        click: () => {
+            const boardNum = Number($("#free-board-detail-board-num").val());
+            if (userIdx!==dbUserIdx){
+                alert("자신이 작성한 글만 수정할 수 있습니다.");
+            }else {
+               window.location.href = '/modify/'+boardNum;
+            };
+        }
 });
 
     boardRegidate = kendo.toString(new Date(boardRegidate), "yyyy-MM-dd H:mm");
@@ -91,18 +104,12 @@ const message = {
     class boardDel{
     deleteOne() {
     const boardNum = Number($("#free-board-detail-board-num").val());
-
-
-    if (userIdx!==dbUserIdx){
-    alert("자신이 작성한 글만 삭제할 수 있습니다.");
-    }else {
         $.ajax({
         url: '/v1/delete/' + boardNum,
         contentType: "application/json; charset=utf-8",
         success: window.location.href = '/board'
                 });
             };
-        };
 
     }
 
