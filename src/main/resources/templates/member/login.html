@@ -15,7 +15,11 @@
     <div class="demo-section">
         <div id="validation-success"></div>
 
-        <form id="loginForm" action="/userLogin" method="post"></form>
+        <form id="loginForm" action="/userLogin" method="post">
+
+
+            <button id="free-board-join-btn">join</button>
+        </form>
     </div>
 
     <script>
@@ -57,10 +61,21 @@
                     validationSuccess.html("<div class='k-messagebox k-messagebox-success'>Form data is valid!</div>");
                     $("#loginForm").submit();
                 },
+
                 clear: function(ev) {
                     validationSuccess.html("");
                 }
             });
+
+
+
+        });
+
+        $('#free-board-join-btn').kendoButton({
+            themeColor: 'info',
+            click : () => {
+                window.location="/join"
+            }
         });
     </script>
 </div>
