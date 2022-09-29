@@ -63,24 +63,56 @@ $("#free-board-detail-modi-date").kendoTextBox({
 $("#free-board-detail-like").kendoButton({
     themeColor: 'base',
     click: () => {
-       // message.callBackConfirm({msg: '추천 하시겠습니까?', callback: new likeInsert().like});
-
-        console.log(likeCheck);
-        new likeUpdate().like();
-        $(this).attr("disabled",true);
+        message.callBackConfirm({msg: '추천 하시겠습니까?', callback: new likeInsert().like});
 
     }
+});
+$('#free-board-detail-comment-write').kendoTextBox({
+    placeholder : "댓글을 입력해 주세요.",
+}).on("keyup",(e) => {
+    if (e.keyCode == 13) {
+        $("#free-board-detail-comment-btn").trigger("click");
+    }
+});
 
-})
+// 댓글 추가
+function replySub(){
+    const boardNum = Number($("#free-board-detail-board-num").val());
+    $("#savereplyform").attr('action','/v1/replyAdd/'+boardNum).submit();
+}
+$('#free-board-detail-comment-btn').kendoButton({
+    click : () => {
+        replySub();
+        // const replyInsert = replySub().getDataSource();
+        // console.log(replyInsert);
+        // replyInsert.read().then(()=>{
+        //     $("#free-board-detail-comment-write").data("kendoTextBox").value("");
+        //     $("#free-board-detail-comment-list-view").data("kendoListView").dataSource.read();
+        // })
+    }
+});
 
 $("#free-board-detail-delete-btn").kendoButton({
     themeColor: 'base',
     click: () => {
-        message.callBackConfirm({msg: '삭제 하시겠습니까?', callback: new boardDel().deleteOne});
+        if (userIdx !== dbUserIdx) {
+            alert("자신이 작성한 글만 삭제할 수 있습니다.");
+        } else {
+            message.callBackConfirm({msg: '삭제 하시겠습니까?', callback: new boardDel().deleteOne});
+        };
     }
+
 });
 $("#free-board-detail-update-btn").kendoButton({
-    themeColor: 'info'
+    themeColor: 'info',
+    click: () => {
+        const boardNum = Number($("#free-board-detail-board-num").val());
+        if (userIdx !== dbUserIdx) {
+            alert("자신이 작성한 글만 수정할 수 있습니다.");
+        } else {
+            window.location.href = '/modify/' + boardNum;
+        };
+    }
 });
 
 boardRegidate = kendo.toString(new Date(boardRegidate), "yyyy-MM-dd H:mm");
@@ -92,52 +124,79 @@ $("#free-board-detail-contents").text(boardContets);
 $("#free-board-detail-reg-date").data("kendoTextBox").value(boardRegidate);
 $("#free-board-detail-modi-date").data("kendoTextBox").value(boardModidate);
 
+const freeBoardDetailDataSource = {
+    replySelectDataSource: () => {
+        const boardNum = Number($("#free-board-detail-board-num").val());
+        return new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '/v1/replyList/'+boardNum,
+                    type: "GET",
+                    dataType : "json",
+                    contentType: 'application/json; charset=utf=8'
+                },
+            },
+            schema: {
+                model: {
+                    replyContents : {type : 'string'},
+                    replyRegidate : {type: 'date'},
+                    replyMember : {type: 'string'}
+                },
+                parse : (res) => {
+                    console.log(res);
+                    res.forEach((data)=>{
+                        data.replyRegidate = kendo.toString(new Date(data.replyRegidate), "yyyy-MM-dd H:mm");
+                    })
+                    return res;
+                }
+            }
+        })
+    }
+}
+
+
+$('#free-board-detail-comment-list-view').kendoListView({
+    height : "90%",
+    dataSource: freeBoardDetailDataSource.replySelectDataSource(),
+    layout: "flex",
+    scrollable : true,
+    flex: {
+        direction: "column"
+    },
+    template: kendo.template($("#free-board-comment-listview").html())
+});
+
 class boardDel {
     deleteOne() {
         const boardNum = Number($("#free-board-detail-board-num").val());
-
-
-        if (userIdx !== dbUserIdx) {
-            alert("자신이 작성한 글만 삭제할 수 있습니다.");
-        } else {
-            $.ajax({
-                url: '/v1/delete/' + boardNum,
-                contentType: "application/json; charset=utf-8",
-                success: window.location.href = '/board'
-            });
-        }
-        ;
+        $.ajax({
+            url: '/v1/delete/' + boardNum,
+            contentType: "application/json; charset=utf-8",
+            success: window.location.href = '/board'
+        });
     };
+    // deleteReply() {
+    //     $.ajax({
+    //         url: '/v1/deleteReply/'+replyNum,
+    //         contentType: "application/json; charset=utf-8",
+    //         success: window.location.href = `/v1/detailOne/${item.boardNum}`
+    //     });
+    // };
 
 }
 
-class likeUpdate {
+class likeInsert {
     like() {
         const boardNum = Number($("#free-board-detail-board-num").val());
-
-
-
-        if(likeCheck == 1) {
-            alert("이미 추천한 글입니다.")
-            location.reload()
-        }else {
-
-            $.ajax({
-                type: "POST",
-                url: '/v1/updateLike/' + boardNum,
-                contentType: "application/json; charset=utf-8",
-                success: () =>{
-                    location.reload()
-                    $("#likeCnt").text(likeCnt)
-                }
-
-
-            });
-
-        }
-
-
-
+        $.ajax({
+            type: "POST",
+            url: '/v1/updateLike/' + boardNum,
+            contentType: "application/json; charset=utf-8",
+            success: () =>{
+                location.reload()
+                $("#likeCnt").text(likeCnt)
+            }
+        });
 
 
     }

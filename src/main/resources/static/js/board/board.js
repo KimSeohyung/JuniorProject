@@ -121,11 +121,10 @@ const boardDataSource = {
                     return res;
                 }
             },
-            serverPaging: true,
-            pageSize: 30
+            pageSize: 12,
+            pageable: true
         })
     },
-
     //추천게시물 데이터
     recommandedPageDataSource: () => {
         return new kendo.data.DataSource({
@@ -155,9 +154,6 @@ const boardDataSource = {
             pageSize: 30
         })
     }
-
-
-
 }
 $("#free-board-grid").kendoGrid({
     columns: [
@@ -197,6 +193,11 @@ $("#free-board-grid").kendoGrid({
             attributes: {style: 'text-align:center'},
         }
     ],
+    toolbar: ["search"],
+    search: {
+        field: ["boardTitle"],
+        field: ["userName"]
+    },
     dataSource: boardDataSource.boardSelectPageDataSource(),
     change: (e) => {
         const cell = e.sender.select();
@@ -204,7 +205,10 @@ $("#free-board-grid").kendoGrid({
         window.location.href = '/v1/detailOne/' + selected.boardNum
     },
     resizable: false,
-    selectable: true
+    selectable: true,
+    pageable: {
+        refresh: true
+    }
 });
 
 $("#free-board-rec-grid").kendoGrid({
@@ -240,7 +244,6 @@ $('#free-board-editor-btn').kendoButton({
         window.location = "/editor"
     }
 });
-$("#pager").kendoPager({});
 
 class user {
     logout() {

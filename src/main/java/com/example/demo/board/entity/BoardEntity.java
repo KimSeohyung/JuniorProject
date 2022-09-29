@@ -2,11 +2,11 @@ package com.example.demo.board.entity;
 
 import com.example.demo.member.entity.Member;
 import lombok.*;
-import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,13 +29,13 @@ public class BoardEntity {
     @Column(name = "board_contents", nullable = false, length = 4000)
     private String boardContents;
 
-    @ColumnDefault("0")
     @Column(name = "board_viewcounts", length = 11)
-    private Integer boardViewcounts =0;
+    private Integer boardViewcounts;
 
     @ColumnDefault("0")
     @Column(name = "board_likes", length = 11)
     private Integer likeCnt;
+
 
     @Column(name = "board_type", nullable = false, length = 20)
     private String boardType;
@@ -54,6 +54,10 @@ public class BoardEntity {
     @JoinColumn(name = "user_num")
     private Member member;
 
+    public BoardEntity updateViewCount(int boardViewcounts){
+        this.boardViewcounts = boardViewcounts+1;
+        return this;
+    }
 
 
 

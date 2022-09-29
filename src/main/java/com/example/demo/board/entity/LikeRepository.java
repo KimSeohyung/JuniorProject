@@ -6,5 +6,4 @@ public interface LikeRepository extends JpaRepository<LikeEntity,Integer> {
 
     LikeEntity findByBoardIdxAndUserNum(int boardNum,int userNum);
 
-
 }
