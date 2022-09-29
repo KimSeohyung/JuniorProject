@@ -2,11 +2,10 @@ package com.example.demo.board.entity;
 
 import com.example.demo.member.entity.Member;
 import lombok.*;
+import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 
 @Getter
@@ -32,7 +31,7 @@ public class BoardEntity {
 
     @ColumnDefault("0")
     @Column(name = "board_viewcounts", length = 11)
-    private Integer boardViewcounts;
+    private Integer boardViewcounts =0;
 
     @ColumnDefault("0")
     @Column(name = "board_likes", length = 11)
@@ -54,8 +53,6 @@ public class BoardEntity {
     @OneToOne(targetEntity = Member.class)
     @JoinColumn(name = "user_num")
     private Member member;
-
-
 
 
 
