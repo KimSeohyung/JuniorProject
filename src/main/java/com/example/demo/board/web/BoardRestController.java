@@ -39,15 +39,19 @@ public class BoardRestController {
         return boardService.findAll();
     }
 
+    @GetMapping("/recommandList")
+    public List<BoardEntity> recommandList(){return boardService.bestBoard(10);}
+
     @GetMapping("/detailOne/{boardNum}")
     public ModelAndView detailOne(@PathVariable int boardNum, @AuthenticationPrincipal PrincipalDetail principalDetail){
        BoardEntity boardOne = boardService.findOne(boardNum);
        int likeCnt = boardService.likeCnt(boardNum);
        int userIdx = principalDetail.getUserIdx();
+       int likeCheck = boardService.likeCheck(boardNum,userIdx);
 
-        System.out.println("좋아요:"+likeCnt);
 
         ModelAndView mav = new ModelAndView("boardDetail");
+        mav.addObject("likeCheck",likeCheck);
         mav.addObject("boardOne", boardOne);
         mav.addObject("userIdx", userIdx);
         mav.addObject("likeCnt",likeCnt);
@@ -79,10 +83,11 @@ public class BoardRestController {
 
     }
 
-    @PostMapping("/updateLike/{boardNum}")
+    @PostMapping ("/updateLike/{boardNum}")
     public int updateLike( @PathVariable int boardNum , @AuthenticationPrincipal PrincipalDetail principalDetail){
 
         LikeEntity likeEntity = new LikeEntity();
+        BoardEntity boardEntity = new BoardEntity();
 
         int userIdx = principalDetail.getUserIdx();
         int likeCnt = boardService.likeCnt(boardNum);
@@ -93,11 +98,15 @@ public class BoardRestController {
 
         int likeCheck = boardService.likeCheck(boardNum,userIdx);
 
-        if (likeCheck == 1 ) {
+
+
+    /*    if (likeCheck == 1 ) {
             boardService.likeDelete(boardNum,userIdx);
-        }else {
+        }else {*/
             boardService.likeInsert(likeEntity);
-        }
+
+
+//        }
 
         return likeCnt;
 

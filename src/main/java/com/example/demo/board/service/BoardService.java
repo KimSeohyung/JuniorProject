@@ -44,8 +44,12 @@ public class BoardService {
 
     public void likeInsert(LikeEntity likeEntity){
 
+        BoardEntity board = new BoardEntity();
+        int boardNum = likeEntity.getBoardIdx();
 
         likeRepository.save(likeEntity);
+        boardRepository.likeUpdate(board,boardNum);
+
     }
 
     public int likeCheck(int boardNum,int userNum) {
@@ -63,8 +67,10 @@ public class BoardService {
         likeRepository.delete(find);
     }
 
-    public int likeCnt(int boardNum) { return likeRepository.countByBoardIdx(boardNum); }
+    public int likeCnt(int boardNum) { return boardRepository.likeCnt(boardNum); }
 
-
+    public List<BoardEntity> bestBoard (int a){
+        return boardRepository.findByLikeCntGreaterThan(a);
+    }
 
 }

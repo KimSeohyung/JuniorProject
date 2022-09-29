@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "tb_board")
@@ -33,6 +33,10 @@ public class BoardEntity {
     @ColumnDefault("0")
     @Column(name = "board_viewcounts", length = 11)
     private Integer boardViewcounts;
+
+    @ColumnDefault("0")
+    @Column(name = "board_likes", length = 11)
+    private Integer likeCnt;
 
     @Column(name = "board_type", nullable = false, length = 20)
     private String boardType;

@@ -8,6 +8,7 @@ import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
@@ -23,34 +25,22 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CpAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
 
-        String errorMessage = null;
-        String errPage = "/login/error";
-        if (exception instanceof InternalAuthenticationServiceException) {
-            errorMessage = "아이디 또는 비밀번호를 확인하세요.";
-        } else if (exception instanceof BadCredentialsException) {
-            errorMessage = "아이디 또는 비밀번호를 확인하세요.";
-        } else {
-            if (exception instanceof DisabledException) {
-                errorMessage = "계정이 비활성화 되었습니다. 관리자에게 문의하세요.";
-            } else if (exception instanceof CredentialsExpiredException) {
-                errorMessage = exception.getMessage();
-                errPage = "/login/error";
-            } else if (exception instanceof SessionAuthenticationException) {
-                errorMessage = "동일계정이 접속중입니다. 기존계정을 로그아웃하세요.";
-            } else {
-                errorMessage = "로그인 싪패하엿습니다.";
-            }
+        String errorMessage;
+        if (e instanceof BadCredentialsException || e instanceof InternalAuthenticationServiceException){
+            errorMessage="아이디 또는 비밀번호가 맞지 않습니다.";
+        }else if (e instanceof UsernameNotFoundException){
+            errorMessage="존재하지 않는 아이디 입니다.";
         }
-        var userCd =request.getParameter("userCd");
-        log.error("error - {} - {}", errorMessage,userCd);
-        request.setAttribute("error", errorMessage);
-        request.setAttribute("userCd", userCd);
-        log.debug("{}",request.getAttribute("userCd"));
-        //this.setDefaultFailureUrl(SecurityConfig.AUTH_PAGE);
-       // super.onAuthenticationFailure(request,response,exception);
-        AtomicReference<String> defaultFailureUrl = new AtomicReference<>(errPage);
-        request.getRequestDispatcher(defaultFailureUrl.get()).forward(request, response);
+        else{
+            errorMessage="알 수 없는 이유로 로그인이 안되고 있습니다.";
+        }
+
+        errorMessage= URLEncoder.encode(errorMessage,"UTF-8");//한글 인코딩 깨지는 문제 방지
+        setDefaultFailureUrl("/login?error=true&exception=" + errorMessage);
+        super.onAuthenticationFailure(request,response,e);
     }
+
 }
+
