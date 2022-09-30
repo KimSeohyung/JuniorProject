@@ -68,42 +68,41 @@ $("#free-board-detail-like").kendoButton({
     }
 });
 $('#free-board-detail-comment-write').kendoTextBox({
-    placeholder : "댓글을 입력해 주세요.",
-}).on("keyup",(e) => {
-    if (e.keyCode == 13) {
-        $("#free-board-detail-comment-btn").trigger("click");
-    }
+    placeholder : "댓글을 입력해 주세요."
+
 });
 
-// 댓글 추가
-function replySub(){
-    const boardNum = Number($("#free-board-detail-board-num").val());
-    const param = {
-        board_num : Number($("#free-board-detail-board-num").val()),
-        reply_contets : $("#free-board-detail-comment-write").data("kendoTextBox").value(),
-    }
 
-    $.ajax({
-        type: 'POST',
-        url: "v1/replyAdd/"+boardNum,
-        data:JSON.stringify(param) ,
-        contentType: 'application/json',
-        success: function (){
-            alert("이이잉");
+
+
+
+$("#free-board-detail-comment-btn").kendoButton({
+    themeColor: 'base',
+    click: () => {
+        const boardNum = Number($("#free-board-detail-board-num").val())
+        const param = {
+            user_num: userIdx,
+            reply_contents: $("#free-board-detail-comment-write").data("kendoTextBox").value()
         }
-    })
-}
-$('#free-board-detail-comment-btn').kendoButton({
-    click : () => {
-        replySub();
-        // const replyInsert = replySub().getDataSource();
-        // console.log(replyInsert);
-        // replyInsert.read().then(()=>{
-        //     $("#free-board-detail-comment-write").data("kendoTextBox").value("");
-        //     $("#free-board-detail-comment-list-view").data("kendoListView").dataSource.read();
-        // })
+        $.ajax({
+            url: '/v1/replyAdd/'+boardNum,
+            method: "POST",
+            data: JSON.stringify(param),
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            success: function (){
+                freeBoardDetailDataSource.replySelectDataSource();
+            }
+        })
+
+
+
+        // message.callBackConfirm({msg: '등록 하시겠습니까?', callback: replySub()});
     }
+
 });
+
+
 
 $("#free-board-detail-delete-btn").kendoButton({
     themeColor: 'base',
@@ -201,17 +200,22 @@ class boardDel {
 class likeInsert {
     like() {
         const boardNum = Number($("#free-board-detail-board-num").val());
-        $.ajax({
-            type: "POST",
-            url: '/v1/updateLike/' + boardNum,
-            contentType: "application/json; charset=utf-8",
-            success: () =>{
-                location.reload()
-                $("#likeCnt").text(likeCnt)
-            }
-        });
 
+        if(likeCheck == 1) {
+            alert("이미 추천한 글입니다.")
+            location.reload()
+        }else {
 
+            $.ajax({
+                type: "POST",
+                url: '/v1/updateLike/' + boardNum,
+                contentType: "application/json; charset=utf-8",
+                success: () => {
+                    location.reload()
+                    $("#likeCnt").text(likeCnt)
+                }
+            });
+        }
     }
 }
 
