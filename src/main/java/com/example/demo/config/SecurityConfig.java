@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/login", "/join","/joinAdd").permitAll() // 누구나 접근 허용
-                .antMatchers("/userInfo","/detailOne").hasAuthority("ROLE_USER") // USER, ADMIN만 접근 가능
+                .antMatchers("/userInfo","/editor").hasAuthority("ROLE_ADMIN") // USER, ADMIN만 접근 가능
                 .anyRequest().authenticated() //나머지는 권한의 종류 상관없이 권한있으면 접근가능
                 .and()
                 .formLogin(
