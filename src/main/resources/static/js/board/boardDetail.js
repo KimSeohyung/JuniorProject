@@ -67,49 +67,13 @@ $("#free-board-detail-like").kendoButton({
 
     }
 });
+
 $('#free-board-detail-comment-write').kendoTextBox({
     placeholder : "댓글을 입력해 주세요."
-// }).on("keyup",(e) => {
-    // if (e.keyCode == 13) {
-    //     $("#free-board-detail-comment-btn").trigger("click");
-    // }
-});
-
-// 댓글 추가
-// function replySub(){
-//     $.ajax({
-//         type: "POST",
-//         url: '/v1/replyAdd/' + boardNum,
-//         data: {
-//             board_num: Number($("#free-board-detail-board-num").val()),
-//             user_num: userIdx,
-//             reply_contents: $("#free-board-detail-comment-write").data("kendoTextBox").value()
-//         },
-//         contentType: "application/json; charset=utf-8",
-//         success: () =>{
-//             alert("퇴근하고싶당");
-//         }
-//     });
-//     console.log($("#free-board-detail-comment-write").data("kendoTextBox").value());
-// };
-
-
-$('#free-board-detail-comment-btn').click(function (){
-            const boardNum = Number($("#free-board-detail-board-num").val())
-            const param = {
-                user_num: userIdx,
-                reply_contents: $("#free-board-detail-comment-write").data("kendoTextBox").value()
-            }
-            $.ajax({
-                url: '/v1/replyAdd/'+boardNum,
-                method: "POST",
-                data: JSON.stringify(param),
-                contentType: "application/json; charset=utf-8",
-                dataType: 'json'
-            });
-            console.log(param);
-
-            // message.callBackConfirm({msg: '등록 하시겠습니까?', callback: replySub()});
+}).keyup(function (e){
+    if (e.keyCode == 13) {
+        $("#free-board-detail-comment-btn").trigger("click");
+    }
 });
 
 $("#free-board-detail-delete-btn").kendoButton({
@@ -174,6 +138,19 @@ const freeBoardDetailDataSource = {
     }
 }
 
+$('#free-board-detail-comment-validator').kendoValidator({
+    rules:{
+        required : (input)=>{
+            if(input.is("[name=free-board-detail-comment-write]")){return input.data("kendoTextBox").value() !== "";}
+            return true;
+        },
+    },
+    messages:{
+        required : (input)=>{
+            return "";
+        },
+    }
+})
 
 $('#free-board-detail-comment-list-view').kendoListView({
     height : "90%",
@@ -186,6 +163,29 @@ $('#free-board-detail-comment-list-view').kendoListView({
     template: kendo.template($("#free-board-comment-listview").html())
 });
 
+$('#free-board-detail-comment-btn').kendoButton({
+    click: () => {
+
+        const boardNum = Number($("#free-board-detail-board-num").val())
+        const param = {
+            user_num: userIdx,
+            reply_contents: $("#free-board-detail-comment-write").data("kendoTextBox").value()
+        }
+        $.ajax({
+            url: '/v1/replyAdd/' + boardNum,
+            method: "POST",
+            data: JSON.stringify(param),
+            contentType: "application/json; charset=utf-8",
+            success: function(data) {
+                $("#free-board-detail-comment-write").data("kendoTextBox").value("");
+                $("#free-board-detail-comment-list-view").data("kendoListView").dataSource.read();
+            }
+
+        });
+        console.log(param);
+    }
+});
+
 class boardDel {
     deleteOne() {
         const boardNum = Number($("#free-board-detail-board-num").val());
@@ -195,13 +195,6 @@ class boardDel {
             success: window.location.href = '/board'
         });
     };
-    // deleteReply() {
-    //     $.ajax({
-    //         url: '/v1/deleteReply/'+replyNum,
-    //         contentType: "application/json; charset=utf-8",
-    //         success: window.location.href = `/v1/detailOne/${item.boardNum}`
-    //     });
-    // };
 
 }
 
