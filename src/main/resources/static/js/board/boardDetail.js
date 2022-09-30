@@ -67,42 +67,14 @@ $("#free-board-detail-like").kendoButton({
 
     }
 });
+
 $('#free-board-detail-comment-write').kendoTextBox({
     placeholder : "댓글을 입력해 주세요."
-
-});
-
-
-
-
-
-$("#free-board-detail-comment-btn").kendoButton({
-    themeColor: 'base',
-    click: () => {
-        const boardNum = Number($("#free-board-detail-board-num").val())
-        const param = {
-            user_num: userIdx,
-            reply_contents: $("#free-board-detail-comment-write").data("kendoTextBox").value()
-        }
-        $.ajax({
-            url: '/v1/replyAdd/'+boardNum,
-            method: "POST",
-            data: JSON.stringify(param),
-            contentType: "application/json; charset=utf-8",
-            dataType: 'json',
-            success: function (){
-                freeBoardDetailDataSource.replySelectDataSource();
-            }
-        })
-
-
-
-        // message.callBackConfirm({msg: '등록 하시겠습니까?', callback: replySub()});
+}).keyup(function (e){
+    if (e.keyCode == 13) {
+        $("#free-board-detail-comment-btn").trigger("click");
     }
-
 });
-
-
 
 $("#free-board-detail-delete-btn").kendoButton({
     themeColor: 'base',
@@ -166,6 +138,19 @@ const freeBoardDetailDataSource = {
     }
 }
 
+$('#free-board-detail-comment-validator').kendoValidator({
+    rules:{
+        required : (input)=>{
+            if(input.is("[name=free-board-detail-comment-write]")){return input.data("kendoTextBox").value() !== "";}
+            return true;
+        },
+    },
+    messages:{
+        required : (input)=>{
+            return "";
+        },
+    }
+})
 
 $('#free-board-detail-comment-list-view').kendoListView({
     height : "90%",
@@ -178,6 +163,29 @@ $('#free-board-detail-comment-list-view').kendoListView({
     template: kendo.template($("#free-board-comment-listview").html())
 });
 
+$('#free-board-detail-comment-btn').kendoButton({
+    click: () => {
+
+        const boardNum = Number($("#free-board-detail-board-num").val())
+        const param = {
+            user_num: userIdx,
+            reply_contents: $("#free-board-detail-comment-write").data("kendoTextBox").value()
+        }
+        $.ajax({
+            url: '/v1/replyAdd/' + boardNum,
+            method: "POST",
+            data: JSON.stringify(param),
+            contentType: "application/json; charset=utf-8",
+            success: function(data) {
+                $("#free-board-detail-comment-write").data("kendoTextBox").value("");
+                $("#free-board-detail-comment-list-view").data("kendoListView").dataSource.read();
+            }
+
+        });
+        console.log(param);
+    }
+});
+
 class boardDel {
     deleteOne() {
         const boardNum = Number($("#free-board-detail-board-num").val());
@@ -187,25 +195,17 @@ class boardDel {
             success: window.location.href = '/board'
         });
     };
-    // deleteReply() {
-    //     $.ajax({
-    //         url: '/v1/deleteReply/'+replyNum,
-    //         contentType: "application/json; charset=utf-8",
-    //         success: window.location.href = `/v1/detailOne/${item.boardNum}`
-    //     });
-    // };
 
 }
 
 class likeInsert {
     like() {
-        const boardNum = Number($("#free-board-detail-board-num").val());
-
         if(likeCheck == 1) {
             alert("이미 추천한 글입니다.")
             location.reload()
         }else {
 
+            const boardNum = Number($("#free-board-detail-board-num").val());
             $.ajax({
                 type: "POST",
                 url: '/v1/updateLike/' + boardNum,
@@ -215,6 +215,7 @@ class likeInsert {
                     $("#likeCnt").text(likeCnt)
                 }
             });
+
         }
     }
 }
