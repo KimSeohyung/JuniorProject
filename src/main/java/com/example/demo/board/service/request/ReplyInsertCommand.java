@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 @Entity
 @Table(name = "tb_reply")
+@DynamicInsert
 public class ReplyInsertCommand {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

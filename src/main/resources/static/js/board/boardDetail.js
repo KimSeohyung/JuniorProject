@@ -68,28 +68,48 @@ $("#free-board-detail-like").kendoButton({
     }
 });
 $('#free-board-detail-comment-write').kendoTextBox({
-    placeholder : "댓글을 입력해 주세요.",
-}).on("keyup",(e) => {
-    if (e.keyCode == 13) {
-        $("#free-board-detail-comment-btn").trigger("click");
-    }
+    placeholder : "댓글을 입력해 주세요."
+// }).on("keyup",(e) => {
+    // if (e.keyCode == 13) {
+    //     $("#free-board-detail-comment-btn").trigger("click");
+    // }
 });
 
 // 댓글 추가
-function replySub(){
-    const boardNum = Number($("#free-board-detail-board-num").val());
-    $("#savereplyform").attr('action','/v1/replyAdd/'+boardNum).submit();
-}
-$('#free-board-detail-comment-btn').kendoButton({
-    click : () => {
-        replySub();
-        // const replyInsert = replySub().getDataSource();
-        // console.log(replyInsert);
-        // replyInsert.read().then(()=>{
-        //     $("#free-board-detail-comment-write").data("kendoTextBox").value("");
-        //     $("#free-board-detail-comment-list-view").data("kendoListView").dataSource.read();
-        // })
-    }
+// function replySub(){
+//     $.ajax({
+//         type: "POST",
+//         url: '/v1/replyAdd/' + boardNum,
+//         data: {
+//             board_num: Number($("#free-board-detail-board-num").val()),
+//             user_num: userIdx,
+//             reply_contents: $("#free-board-detail-comment-write").data("kendoTextBox").value()
+//         },
+//         contentType: "application/json; charset=utf-8",
+//         success: () =>{
+//             alert("퇴근하고싶당");
+//         }
+//     });
+//     console.log($("#free-board-detail-comment-write").data("kendoTextBox").value());
+// };
+
+
+$('#free-board-detail-comment-btn').click(function (){
+            const boardNum = Number($("#free-board-detail-board-num").val())
+            const param = {
+                user_num: userIdx,
+                reply_contents: $("#free-board-detail-comment-write").data("kendoTextBox").value()
+            }
+            $.ajax({
+                url: '/v1/replyAdd/'+boardNum,
+                method: "POST",
+                data: JSON.stringify(param),
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json'
+            });
+            console.log(param);
+
+            // message.callBackConfirm({msg: '등록 하시겠습니까?', callback: replySub()});
 });
 
 $("#free-board-detail-delete-btn").kendoButton({

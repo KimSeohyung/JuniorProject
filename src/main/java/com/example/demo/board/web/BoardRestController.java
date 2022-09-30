@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -34,14 +35,11 @@ public class BoardRestController {
     }
 
     @PostMapping("/replyAdd/{boardNum}")
-    public void replyAdd(ReplyInsertCommand rcommand,
-                         @PathVariable int boardNum,
-                         @AuthenticationPrincipal PrincipalDetail principalDetail,
-                         HttpServletResponse response)throws IOException{
-        rcommand.setUser_num(principalDetail.getUserIdx());
+    public void replyAdd(@RequestBody @Valid ReplyInsertCommand rcommand,
+                         @PathVariable int boardNum){
         rcommand.setBoard_num(boardNum);
         boardService.replyInsert(rcommand);
-        response.sendRedirect("/v1/detailOne/"+boardNum);
+        System.out.println("컨텐츠: "+rcommand);
     }
 
     @GetMapping("/boardList")
