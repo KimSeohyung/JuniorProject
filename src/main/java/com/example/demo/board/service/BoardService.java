@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -40,7 +41,9 @@ public class BoardService {
         boardinsertRepository.save(command);
     }
 
-    public void replyInsert(ReplyInsertCommand rcommand) {replyInsertRepository.save(rcommand);}
+    public void replyInsert(ReplyInsertCommand rcommand) {
+        replyInsertRepository.save(rcommand);
+    }
 
     public List<BoardEntity> findAll(){
         List<BoardEntity> boardList = boardRepository.findAll(Sort.by(Sort.Direction.DESC,"boardNum"));

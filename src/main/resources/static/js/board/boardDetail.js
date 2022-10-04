@@ -200,23 +200,18 @@ class boardDel {
 
 class likeInsert {
     like() {
-        if(likeCheck == 1) {
-            alert("이미 추천한 글입니다.")
-            location.reload()
-        }else {
+        const boardNum = Number($("#free-board-detail-board-num").val());
+        $.ajax({
+            type: "POST",
+            url: '/v1/updateLike/' + boardNum,
+            contentType: "application/json; charset=utf-8",
+            success: () =>{
+                location.reload()
+                $("#likeCnt").text(likeCnt)
+            }
+        });
 
-            const boardNum = Number($("#free-board-detail-board-num").val());
-            $.ajax({
-                type: "POST",
-                url: '/v1/updateLike/' + boardNum,
-                contentType: "application/json; charset=utf-8",
-                success: () => {
-                    location.reload()
-                    $("#likeCnt").text(likeCnt)
-                }
-            });
 
-        }
     }
 }
 

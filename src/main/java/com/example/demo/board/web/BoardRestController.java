@@ -40,6 +40,7 @@ public class BoardRestController {
         rcommand.setBoard_num(boardNum);
         boardService.replyInsert(rcommand);
         System.out.println("컨텐츠: "+rcommand);
+
     }
 
     @GetMapping("/boardList")
@@ -95,7 +96,7 @@ public class BoardRestController {
     }
 
     @PostMapping("/boardModi/{boardNum}")
-    public void boardModi(BoardInsertCommand command,
+    public void boardModi(@RequestBody @Valid BoardInsertCommand command,
                           @PathVariable int boardNum,
                           @AuthenticationPrincipal PrincipalDetail principalDetail,
                           HttpServletResponse response) throws IOException{

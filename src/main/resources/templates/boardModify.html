@@ -27,7 +27,6 @@
                 <div class="pop-k-header k-card-header" style="height: 3%;">
                     <h3 id="free-board-editor-popup-title"></h3>
                 </div>
-                <form id="modiboardform" th:action="@{'/v1/boardModi/'+${boardOne.boardNum}}" method="post">
                     <input type="hidden" id="free-board-detail-board-num" th:value="${boardOne.boardNum}">
                     <div class="c-search-box c-flex-center pane-content" style="margin: 20px 20px;">
                         <select id="free-board-search-drop-down-list" name="board_type" style="width: 8%;">
@@ -57,14 +56,10 @@
                         </div>
                     </div>
                     <div>
-                        <hr><button id="free-board-editor-btn-save" onclick="modify()">저장</button>
+                        <hr><button id="free-board-editor-btn-save">저장</button>
                         <button id="free-board-editor-btn-cancle">취소</button>
                     </div>
-                </form>
                 <script th:inline="javascript">
-                    function modify(){
-                        $("#modiboardform").submit();
-                    }
                     const message = {
                         callBackConfirm: function(obj){
                             let opt = $.extend({title: document.title, msg: '처리하겠습니까?', callback: ''}, obj);
@@ -114,7 +109,29 @@
                     $("#free-board-detail-modi-date").data("kendoTextBox").value(boardModidate);
 
                     $('#free-board-editor-btn-save').kendoButton({
-                        themeColor: 'info'
+                        themeColor: 'info',
+                        click: () => {
+                            const boardModi = () => {
+                                const boardNum = Number($("#free-board-detail-board-num").val())
+                                const param = {
+                                    board_title: $("#free-board-editor-title").data("kendoTextBox").value(),
+                                    board_contents: $("#editor").data("kendoTextBox").value(),
+                                    board_type: $("#free-board-search-drop-down-list").data("kendoDropDownList").value()
+                                }
+                                $.ajax({
+                                    url: '/v1/boardModi/' + boardNum,
+                                    method: "POST",
+                                    data: JSON.stringify(param),
+                                    contentType: "application/json; charset=utf-8",
+                                    success: function () {
+                                        alert("저장되었습니다.")
+                                        window.location.href= '/v1/detailOne/'+boardNum
+                                    }
+                                });
+                            }
+                            message.callBackConfirm({msg:"수정하시겠습니까?", callback: boardModi});
+                        }
+
                     });
 
                     $('#free-board-editor-btn-cancle').kendoButton({

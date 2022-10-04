@@ -6,93 +6,83 @@
     <link rel="stylesheet" href="/css/styles/kendo.common.min.css" />
     <link rel="stylesheet" href="/css/styles/kendo.default.min.css" />
     <link rel="stylesheet" href="/css/styles/kendo.default.mobile.min.css" />
+    <link rel="stylesheet" href="/css/madrid.css"/>
     <script src="/js/ui/jquery.min.js"></script>
     <script src="/js/ui/kendo.all.min.js"></script>
 </head>
 
 <body>
-<div id="example">
-    <div class="demo-section">
-        <div id="validation-success"></div>
+<div id="content" style="width:100%">
+    <div class="login_wrap" style="background:#fff ;padding: 10px;">
+        <p style="text-align:center;padding-top:150px;padding-bottom:60px;"><img th:src="@{/images/centerlink.png}" alt="logo"/><br><br><br><br>
+            <span style="font-size:20pt;font-family: 'Noto Sans KR';">센터링크 신입게시판</span>
+        </p>
+        <div class="login_box_area" style="font-size:20px;font-weight:600;text-align:center;padding:0;margin-bottom:30px;">
+            <p class="login_box_tit" style="font-size:20px;font-weight:600;text-align:center;padding:0;margin-bottom:30px;"></p>
 
-        <form id="loginForm" action="/userLogin" method="post">
+            <form class="m-t" role="form" th:action="@{/userLogin}" id="loginForm" method="post">
+                <div class="login_input_area">
+                    <p>
+                        <input type="text" id="email" name="email" th:value="${email}" required validationMessage="아이디를 입력하세요." placeholder="아이디를 입력하세요." style="font-size: 14pt" />
+                        <span class="k-invalid-msg" data-for="email"></span>
+                    </p>
+                    <p>
+                        <input type="password" id="password" name="password" required validationMessage="패스워드를 입력하세요." placeholder="패스워드를 입력하세요." style="font-size: 14pt" />
+                        <span class="k-invalid-msg" data-for="password"></span>
+                    </p>
 
-
-            <button id="free-board-join-btn">join</button>
-        </form>
+                    <P th:if="${error != null}"><li th:text="${error}"></li></p>
+                    <p> <span id="loginBtn" class="k-primary" style="width: 100%;height: 60px;">로    그     인</span></p>
+                    <p> <span id="joinBtn" class="k-base" style="width: 100%;height: 60px;">회원가입</span></p>
+                </div>
+            </form>
+        </div>
     </div>
 
-
-
-
     <script th:inline="javascript">
-        $(document).ready(function () {
+       $(document).ready(function () {
+           let $loginForm = $("#loginForm");
+           let validatable = $loginForm.kendoValidator({
+               validationSummary: false,
+               validateOnBlur: true,
+               validate: function (e) {
+                   console.debug(e);
+               }
+           }).data("kendoValidator");
 
-            let exception =[[${exception}]];
-            let error = [[${param.error}]];
+           $loginForm.keypress(function (event) {
+               if (event.which == 13) {
+                   if (validatable.validate()) {
+                       $loginForm.submit();
+                   }
+               }
+           });
 
+           $("#loginBtn").kendoButton({
+               badge: {
+                   size: 300
+               },
+               click: function () {
+                   if (validatable.validate()) {
+                       $loginForm.submit();
+                   }
+               }
+           });
 
-            console.log(exception);
-            console.log(error);
-
-            if (error)  {
-                alert(exception);
-            }
-
-
-            var validationSuccess = $("#validation-success");
-
-            $("#loginForm").kendoForm({
-                orientation: "vertical",
-                formData: {
-
-                    email: "",
-                    password: ""
-                },
-                items: [{
-                    type: "group",
-                    label: "로그인",
-                    items: [
-
-                        { field: "email", label: "이메일:", validation: { required: true, email: true } },
-                        {
-                            field: "password",
-                            label: "패스워드:",
-                            validation: { required: true },
-                            editor: function (container, options) {
-                                $('<input type="password" id="Password" name="' + options.field + '" title="Password" required="required" autocomplete="off" aria-labelledby="Password-form-label" data-bind="value: Password" aria-describedby="Password-form-hint"/>')
-                                    .appendTo(container)
-                                    .kendoTextBox();
-                            }
-                        }
-
-                    ]
-                }],
-                validateField: function(e) {
-                    validationSuccess.html("");
-                },
-                submit: function(e) {
-
-                    e.preventDefault();
-                    validationSuccess.html("<div class='k-messagebox k-messagebox-success'>Form data is valid!</div>");
-                    $("#loginForm").submit();
-                },
-
-                clear: function(ev) {
-                    validationSuccess.html("");
-                }
-            });
-
-
-
-        });
-
-        $('#free-board-join-btn').kendoButton({
-            themeColor: 'info',
-            click : () => {
-                window.location="/join"
-            }
-        });
+           $('#joinBtn').kendoButton({
+               themeColor: 'info',
+               click : () => {
+                   window.location="/join"
+               }
+           });
+           const email = $('#email');
+           const password = $('#password');
+           if(email.val()===''){
+               email.focus();
+           }else{
+               password.focus();
+           }
+       });
 
     </script>
 </div>
